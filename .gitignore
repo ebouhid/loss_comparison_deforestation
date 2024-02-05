@@ -1,0 +1,8 @@
+models/
+outputs/
+results/
+*.out
+*.pyc
+__pycache__/
+lightning_logs/
+mlruns/
