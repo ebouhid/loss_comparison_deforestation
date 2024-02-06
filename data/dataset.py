@@ -99,7 +99,7 @@ class XinguDataset(Dataset):
         combination = np.zeros(image.shape[:2] + (nbands,))
 
         for i in range(nbands):
-            combination[:, :, i] = image[:, :, self.composition[i]]
+            combination[:, :, i] = image[:, :, (self.composition[i] - 1)]
 
         combination = np.float32(combination) / 255
 
