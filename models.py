@@ -50,7 +50,8 @@ class BinarySegmentationModel(pl.LightningModule):
                                      lr=self.lr)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
                                                     step_size=10,
-                                                    gamma=0.9)
+                                                    gamma=0.9,
+                                                    verbose=True)
 
         return {"optimizer": optimizer, "lr_scheduler": scheduler}
 
@@ -140,7 +141,8 @@ class MultiClassSegmentationModel(pl.LightningModule):
                                      lr=self.lr)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
                                                     step_size=10,
-                                                    gamma=0.9)
+                                                    gamma=0.9,
+                                                    verbose=True)
 
         return {"optimizer": optimizer, "lr_scheduler": scheduler}
     
