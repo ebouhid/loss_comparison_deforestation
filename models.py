@@ -31,16 +31,16 @@ class BinarySegmentationModel(pl.LightningModule):
         self.lr = lr
 
         # Defining metrics
-        self.train_accuracy = torchmetrics.Accuracy(task='binary')
-        self.val_accuracy = torchmetrics.Accuracy(task='binary')
-        self.train_precision = torchmetrics.Precision(task='binary')
-        self.val_precision = torchmetrics.Precision(task='binary')
-        self.train_recall = torchmetrics.Recall(task='binary')
-        self.val_recall = torchmetrics.Recall(task='binary')
-        self.train_f1 = torchmetrics.F1Score(task='binary')
-        self.val_f1 = torchmetrics.F1Score(task='binary')
-        self.train_iou = torchmetrics.JaccardIndex(task='binary')
-        self.val_iou = torchmetrics.JaccardIndex(task='binary')
+        self.train_accuracy = torchmetrics.Accuracy(task='binary', reduction='weighted')
+        self.val_accuracy = torchmetrics.Accuracy(task='binary', reduction='weighted')
+        self.train_precision = torchmetrics.Precision(task='binary', reduction='weighted')
+        self.val_precision = torchmetrics.Precision(task='binary', reduction='weighted')
+        self.train_recall = torchmetrics.Recall(task='binary', reduction='weighted')
+        self.val_recall = torchmetrics.Recall(task='binary', reduction='weighted')
+        self.train_f1 = torchmetrics.F1Score(task='binary', reduction='weighted')
+        self.val_f1 = torchmetrics.F1Score(task='binary', reduction='weighted')
+        self.train_iou = torchmetrics.JaccardIndex(task='binary', reduction='weighted')
+        self.val_iou = torchmetrics.JaccardIndex(task='binary', reduction='weighted')
 
     def forward(self, x):
         return self.model(x)
