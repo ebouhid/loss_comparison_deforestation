@@ -17,7 +17,7 @@ BATCH_SIZE = 32
 NUM_EPOCHS = 5
 PATCH_SIZE = 256
 STRIDE_SIZE = 64
-NUM_CLASSES = 1
+NUM_CLASSES = 4
 DATASET_DIR = './data/scenes_allbands_ndvi'
 GT_DIR = './data/truth_masks'
 COMPOSITION = [4, 3, 1, 7]
@@ -26,7 +26,7 @@ COMPOSITION = [4, 3, 1, 7]
 train_regions = [1, 2, 6, 7, 8, 9, 10]  # Do not use region 5 anywhere
 test_regions = [3]
 
-model = models.BinarySegmentationModel(model_name=MODEL_NAME,
+model = models.MultiClassSegmentationModel(model_name=MODEL_NAME,
                                             in_channels=4,
                                             num_classes=NUM_CLASSES)
 

@@ -3,6 +3,7 @@ import os
 from PIL import Image
 import numpy as np
 import cv2
+from . import encode
 
 
 class XinguDataset(Dataset):
@@ -102,7 +103,7 @@ class XinguDataset(Dataset):
 
         combination = np.float32(combination) / 255
 
-        mask = np.expand_dims(mask, axis=-1)
+        mask = encode(mask, 4)
         mask = np.float32(mask)
 
         combination = combination.astype(np.float32)

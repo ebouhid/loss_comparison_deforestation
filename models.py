@@ -118,18 +118,19 @@ class MultiClassSegmentationModel(pl.LightningModule):
 
         self.loss = torch.nn.CrossEntropyLoss()
         self.lr = lr
+        self.num_classes = num_classes
 
         # Defining metrics
-        self.train_accuracy = torchmetrics.Accuracy()
-        self.val_accuracy = torchmetrics.Accuracy()
-        self.train_precision = torchmetrics.Precision()
-        self.val_precision = torchmetrics.Precision()
-        self.train_recall = torchmetrics.Recall()
-        self.val_recall = torchmetrics.Recall()
-        self.train_f1 = torchmetrics.F1()
-        self.val_f1 = torchmetrics.F1()
-        self.train_iou = torchmetrics.IoU()
-        self.val_iou = torchmetrics.IoU()
+        self.train_accuracy = torchmetrics.Accuracy(task='multiclass', num_classes=self.num_classes)
+        self.val_accuracy = torchmetrics.Accuracy(task='multiclass', num_classes=self.num_classes)
+        self.train_precision = torchmetrics.Precision(task='multiclass', num_classes=self.num_classes)
+        self.val_precision = torchmetrics.Precision(task='multiclass', num_classes=self.num_classes)
+        self.train_recall = torchmetrics.Recall(task='multiclass', num_classes=self.num_classes)
+        self.val_recall = torchmetrics.Recall(task='multiclass', num_classes=self.num_classes)
+        self.train_f1 = torchmetrics.F1Score(task='multiclass', num_classes=self.num_classes)
+        self.val_f1 = torchmetrics.F1Score(task='multiclass', num_classes=self.num_classes)
+        self.train_iou = torchmetrics.JaccardIndex(task='multiclass', num_classes=self.num_classes)
+        self.val_iou = torchmetrics.JaccardIndex(task='multiclass', num_classes=self.num_classes)
 
     def forward(self, x):
         return self.model(x)
@@ -148,6 +149,7 @@ class MultiClassSegmentationModel(pl.LightningModule):
         outputs = self.model(inputs)
 
         # Calculate loss and training metrics
+        targets = torch.argmax(targets, dim=1)
         loss = self.loss(outputs, targets)
         train_accuracy = np.float64(self.train_accuracy(outputs, targets))
         train_precision = np.float64(self.train_precision(outputs, targets))
@@ -170,6 +172,7 @@ class MultiClassSegmentationModel(pl.LightningModule):
         outputs = self.model(inputs)
 
         # Calculate loss and validation metrics
+        targets = torch.argmax(targets, dim=1)
         loss = self.loss(outputs, targets)
         val_accuracy = np.float64(self.val_accuracy(outputs, targets))
         val_precision = np.float64(self.val_precision(outputs, targets))
