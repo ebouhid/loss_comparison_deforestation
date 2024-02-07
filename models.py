@@ -106,7 +106,8 @@ class MultiClassSegmentationModel(pl.LightningModule):
                  activation=None,
                  encoder_name='resnet101',
                  encoder_weights='imagenet',
-                 lr=1e-3):
+                 lr=1e-3,
+                 device='cuda'):
         super().__init__()
 
         # Defining model
@@ -118,7 +119,7 @@ class MultiClassSegmentationModel(pl.LightningModule):
                                  encoder_name=encoder_name,
                                  encoder_weights=encoder_weights)
 
-        class_weights = torch.tensor([0.5, 2.0, 1.0, 1.0])
+        class_weights = torch.tensor([0.5, 2.0, 1.0, 1.0]).to(device)
         self.loss = FocalLoss(alpha=class_weights, gamma=2, reduction='mean')
         self.lr = lr
         self.num_classes = num_classes
@@ -153,8 +154,9 @@ class MultiClassSegmentationModel(pl.LightningModule):
         outputs = self.model(inputs)
 
         # Calculate loss and training metrics
-        targets = torch.argmax(targets, dim=1)
         loss = self.loss(outputs, targets)
+        outputs = torch.argmax(outputs, dim=1)
+        targets = torch.argmax(targets, dim=1)
         train_accuracy = np.float64(self.train_accuracy(outputs, targets))
         train_precision = np.float64(self.train_precision(outputs, targets))
         train_recall = np.float64(self.train_recall(outputs, targets))
@@ -176,8 +178,9 @@ class MultiClassSegmentationModel(pl.LightningModule):
         outputs = self.model(inputs)
 
         # Calculate loss and validation metrics
-        targets = torch.argmax(targets, dim=1)
         loss = self.loss(outputs, targets)
+        outputs = torch.argmax(outputs, dim=1)
+        targets = torch.argmax(targets, dim=1)
         val_accuracy = np.float64(self.val_accuracy(outputs, targets))
         val_precision = np.float64(self.val_precision(outputs, targets))
         val_recall = np.float64(self.val_recall(outputs, targets))
