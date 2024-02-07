@@ -3,8 +3,14 @@ import os
 from PIL import Image
 import numpy as np
 import cv2
-from . import encode
 
+def encode(label_array, num_classes):
+    label_array = np.uint8(label_array)
+    flat_labels = label_array.flatten()
+    one_hot_encoded = np.eye(num_classes)[flat_labels]
+    one_hot_encoded = one_hot_encoded.reshape(label_array.shape + (num_classes, ))
+
+    return one_hot_encoded
 
 class XinguDataset(Dataset):
     def __init__(self,
