@@ -5,6 +5,7 @@ import torch
 import torchmetrics
 import numpy as np
 import hashlib
+from focalloss import FocalLoss
 
 
 class BinarySegmentationModel(pl.LightningModule):
@@ -117,7 +118,8 @@ class MultiClassSegmentationModel(pl.LightningModule):
                                  encoder_name=encoder_name,
                                  encoder_weights=encoder_weights)
 
-        self.loss = torch.nn.CrossEntropyLoss()
+        class_weights = torch.tensor([0.5, 2.0, 1.0, 1.0])
+        self.loss = FocalLoss(alpha=class_weights, gamma=2, reduction='mean')
         self.lr = lr
         self.num_classes = num_classes
 
