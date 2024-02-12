@@ -113,4 +113,5 @@ class XinguDataset(Dataset):
         combination = np.transpose(combination, (2, 0, 1))
         mask = np.where(mask == 2, 0, 1)
         mask = np.expand_dims(mask, axis=0)
+        mask = np.float32(mask)
         return combination, mask
