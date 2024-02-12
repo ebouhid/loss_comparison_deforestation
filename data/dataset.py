@@ -4,14 +4,6 @@ from PIL import Image
 import numpy as np
 import cv2
 
-def encode(label_array, num_classes):
-    label_array = np.uint8(label_array)
-    flat_labels = label_array.flatten()
-    one_hot_encoded = np.eye(num_classes)[flat_labels]
-    one_hot_encoded = one_hot_encoded.reshape(label_array.shape + (num_classes, ))
-
-    return one_hot_encoded
-
 class XinguDataset(Dataset):
     def __init__(self,
                  scenes_dir,
@@ -105,11 +97,11 @@ class XinguDataset(Dataset):
         combination = np.zeros(image.shape[:2] + (nbands,))
 
         for i in range(nbands):
-            combination[:, :, i] = image[:, :, (self.composition[i] - 1)]
+            # Normalize this each band
+            band  = image[:, :, (self.composition[i] - 1)]
+            band = (band - np.min(band)) / (np.max(band) - np.min(band))
+            combination[:, :, i] = band
 
-        combination = np.float32(combination) / 255
-
-        mask = encode(mask, 4)
         mask = np.float32(mask)
 
         combination = combination.astype(np.float32)
@@ -119,5 +111,6 @@ class XinguDataset(Dataset):
             combination, mask = aug['image'], aug['mask']
         
         combination = np.transpose(combination, (2, 0, 1))
-        mask = np.transpose(mask, (2, 0, 1))
+        mask = np.where(mask == 2, 0, 1)
+        mask = np.expand_dims(mask, axis=0)
         return combination, mask
