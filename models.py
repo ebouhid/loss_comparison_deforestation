@@ -13,7 +13,6 @@ class BinarySegmentationModel(pl.LightningModule):
                  model_name,
                  in_channels,
                  num_classes,
-                 activation='sigmoid',
                  encoder_name='resnet101',
                  lr=1e-3,
                  encoder_weights='imagenet'):
@@ -24,24 +23,24 @@ class BinarySegmentationModel(pl.LightningModule):
         model_class = getattr(segmentation_models_pytorch, model_name)
         self.model = model_class(in_channels=in_channels,
                                  classes=num_classes,
-                                 activation=activation,
+                                 activation=None,
                                  encoder_name=encoder_name,
                                  encoder_weights=encoder_weights)
 
-        self.loss = BCELoss()
+        self.loss = torch.nn.BCEWithLogitsLoss()
         self.lr = lr
 
         # Defining metrics
-        self.train_accuracy = torchmetrics.Accuracy(task='binary', reduction='weighted')
-        self.val_accuracy = torchmetrics.Accuracy(task='binary', reduction='weighted')
-        self.train_precision = torchmetrics.Precision(task='binary', reduction='weighted')
-        self.val_precision = torchmetrics.Precision(task='binary', reduction='weighted')
-        self.train_recall = torchmetrics.Recall(task='binary', reduction='weighted')
-        self.val_recall = torchmetrics.Recall(task='binary', reduction='weighted')
-        self.train_f1 = torchmetrics.F1Score(task='binary', reduction='weighted')
-        self.val_f1 = torchmetrics.F1Score(task='binary', reduction='weighted')
-        self.train_iou = torchmetrics.JaccardIndex(task='binary', reduction='weighted')
-        self.val_iou = torchmetrics.JaccardIndex(task='binary', reduction='weighted')
+        self.train_accuracy = torchmetrics.Accuracy(task='binary')
+        self.val_accuracy = torchmetrics.Accuracy(task='binary')
+        self.train_precision = torchmetrics.Precision(task='binary')
+        self.val_precision = torchmetrics.Precision(task='binary')
+        self.train_recall = torchmetrics.Recall(task='binary')
+        self.val_recall = torchmetrics.Recall(task='binary')
+        self.train_f1 = torchmetrics.F1Score(task='binary')
+        self.val_f1 = torchmetrics.F1Score(task='binary')
+        self.train_iou = torchmetrics.JaccardIndex(task='binary')
+        self.val_iou = torchmetrics.JaccardIndex(task='binary')
 
     def forward(self, x):
         return self.model(x)
