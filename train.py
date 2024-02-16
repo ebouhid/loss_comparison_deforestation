@@ -27,7 +27,7 @@ compname = ''.join([str(i) for i in COMPOSITION]) if COMPOSITION != range(1, 9) 
 train_regions = [2, 4, 6, 7, 8, 9, 10]  # Do not use region 5 anywhere
 test_regions = [1, 3]
 
-model = models.BinarySegmentationModel_FocalLoss_GammaDot5(model_name=MODEL_NAME,
+model = models.DeepLabV3Plus_FocalLoss_GammaDot5_8ch(model_name=MODEL_NAME,
                                             in_channels=len(COMPOSITION),
                                             num_classes=NUM_CLASSES)
 
