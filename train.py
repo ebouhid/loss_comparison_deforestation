@@ -8,26 +8,27 @@ import mlflow
 import albumentations as A
 
 # Set experiment name
-INFO = 'LightningTest'
-mlflow.set_experiment(INFO)
+INFO = 'FocalLoss_GammaDot5'
+# mlflow.set_experiment(INFO)
 
 # Set hyperparameters
 MODEL_NAME = 'DeepLabV3Plus'
 BATCH_SIZE = 32
-NUM_EPOCHS = 5
+NUM_EPOCHS = 100
 PATCH_SIZE = 256
 STRIDE_SIZE = 64
-NUM_CLASSES = 4
+NUM_CLASSES = 1
 DATASET_DIR = './data/scenes_allbands_ndvi'
 GT_DIR = './data/truth_masks'
-COMPOSITION = [4, 3, 1, 7]
+COMPOSITION = range(1, 9)
+compname = ''.join([str(i) for i in COMPOSITION]) if COMPOSITION != range(1, 9) else "All+NDVI"
 
 # Set regions
-train_regions = [1, 2, 6, 7, 8, 9, 10]  # Do not use region 5 anywhere
-test_regions = [3]
+train_regions = [2, 4, 6, 7, 8, 9, 10]  # Do not use region 5 anywhere
+test_regions = [1, 3]
 
-model = models.MultiClassSegmentationModel(model_name=MODEL_NAME,
-                                            in_channels=4,
+model = models.BinarySegmentationModel_FocalLoss_GammaDot5(model_name=MODEL_NAME,
+                                            in_channels=len(COMPOSITION),
                                             num_classes=NUM_CLASSES)
 
 aug = A.Compose([
@@ -46,7 +47,7 @@ train_ds = XinguDataset(DATASET_DIR,
                         train_regions,
                         patch_size=PATCH_SIZE,
                         stride_size=STRIDE_SIZE,
-                        reflect_pad=False,
+                        reflect_pad=True,
                         transforms=aug)
 test_ds = XinguDataset(DATASET_DIR,
                         GT_DIR,
@@ -71,6 +72,7 @@ test_loader = torch.utils.data.DataLoader(test_ds,
 mlflow.pytorch.autolog()
 mlflow.log_params({
     'model_name': MODEL_NAME,
+    'loss': model.loss,
     'batch_size': BATCH_SIZE,
     'num_epochs': NUM_EPOCHS,
     'patch_size': PATCH_SIZE,
@@ -78,7 +80,7 @@ mlflow.log_params({
     'num_classes': NUM_CLASSES,
     'dataset_dir': DATASET_DIR,
     'gt_dir': GT_DIR,
-    'composition': COMPOSITION,
+    'composition': compname,
     'train_regions': train_regions,
     'test_regions': test_regions,
     'train_size': len(train_ds),
@@ -86,7 +88,7 @@ mlflow.log_params({
 })
 
 # Instantiating checkpoint callback
-checkpoint_callback = ModelCheckpoint(dirpath='./models/', filename=f'{INFO}-{MODEL_NAME}-{COMPOSITION}', monitor='val_iou', save_top_k=1, mode='max', verbose=True, save_last=True)
+checkpoint_callback = ModelCheckpoint(dirpath='./models/', filename=f'{INFO}-{MODEL_NAME}-{compname}', monitor='val_iou', save_top_k=1, mode='max', verbose=True)
 
 # Instantiating trainer
 trainer = pl.Trainer(max_epochs=NUM_EPOCHS,
