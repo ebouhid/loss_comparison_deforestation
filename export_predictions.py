@@ -165,12 +165,14 @@ if __name__ == "__main__":
             iou = true_positives / (true_positives + false_positives + false_negatives)
 
             # Extend lower part of confusion mask for writing text
-            confusion_mask = np.pad(confusion_mask, ((0, 100), (0, 0), (0, 0)), mode='constant', constant_values=0)
+            confusion_mask = np.pad(confusion_mask, ((0, 200), (0, 75), (0, 0)), mode='constant', constant_values=0)
             confusion_mask = (confusion_mask * 255).astype(np.uint8)
 
             # Write metrics on image
-            metrics_str = f"Precision: {precision :.2f}\nRecall: {recall :.2f}\nF1: {f1 :.2f}\nAccuracy: {accuracy :.2f}\nIoU: {iou :.2f}"
+            metrics_str = f"Precision: {precision :.2f} | Recall: {recall :.2f} | F1: {f1 :.2f} | Accuracy: {accuracy :.2f} | IoU: {iou :.2f}"
+            model_info_str = f"Model: {modelpath.split('/')[-1]} | Region: {region}"
             cv2.putText(confusion_mask, metrics_str, (0, height + 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(confusion_mask, model_info_str, (0, height + 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             confusion_mask = cv2.cvtColor(confusion_mask, cv2.COLOR_BGR2RGB)
             cv2.imwrite(f'predictions/{region}_{composition}_{loss}.png', confusion_mask)
             
