@@ -8,7 +8,7 @@ import mlflow
 import albumentations as A
 
 # Set experiment name
-INFO = 'FocalLoss_GammaDot5'
+INFO = 'TverskyLoss_03_07'
 # mlflow.set_experiment(INFO)
 
 # Set hyperparameters
@@ -20,16 +20,14 @@ STRIDE_SIZE = 64
 NUM_CLASSES = 1
 DATASET_DIR = './data/scenes_allbands_ndvi'
 GT_DIR = './data/truth_masks'
-COMPOSITION = range(1, 9)
+COMPOSITION = [4, 3, 1, 6]
 compname = ''.join([str(i) for i in COMPOSITION]) if COMPOSITION != range(1, 9) else "All+NDVI"
 
 # Set regions
 train_regions = [2, 4, 6, 7, 8, 9, 10]  # Do not use region 5 anywhere
 test_regions = [1, 3]
 
-model = models.DeepLabV3Plus_FocalLoss_GammaDot5_8ch(model_name=MODEL_NAME,
-                                            in_channels=len(COMPOSITION),
-                                            num_classes=NUM_CLASSES)
+model = models.DeepLabV3Plus_TverskyLoss_4ch()
 
 aug = A.Compose([
     A.VerticalFlip(p=0.5),

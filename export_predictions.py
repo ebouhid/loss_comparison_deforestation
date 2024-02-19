@@ -37,7 +37,11 @@ def load_model(fname):
             return m.DeepLabV3Plus_Baseline_8ch.load_from_checkpoint(fname)
         else:
             return m.DeepLabV3Plus_Baseline_4ch.load_from_checkpoint(fname)
-    
+    elif "TverskyLoss" in parsed['loss']:
+        if parsed['composition'] == "All+NDVI":
+            return m.DeepLabV3Plus_TverskyLoss_8ch.load_from_checkpoint(fname)
+        else:
+            return m.DeepLabV3Plus_TverskyLoss_4ch.load_from_checkpoint(fname)
     
     raise ValueError(f"Model {fname} not recognized")
 
