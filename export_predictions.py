@@ -49,6 +49,8 @@ def patchify(array, patch_size, stride):
     height, width, _ = array.shape
     patches = []
     patch_counts = []
+    wholesize = (math.ceil(height / stride) * stride, math.ceil(width / stride) * stride)
+    stitched_array = np.zeros((wholesize[0], wholesize[1], array.shape[2]), dtype=array.dtype)
     for x in range(0, height, stride):
         for y in range(0, width, stride):
             # Crop the patch from the input image
@@ -60,7 +62,9 @@ def patchify(array, patch_size, stride):
                 patch = np.pad(patch, ((0, bottompad), (0, rightpad), (0, 0)), mode='reflect')
             patches.append(patch)
             patch_counts.append((x, y))
-    return {"patches": patches, "patch_counts": patch_counts}
+            stitched_array[x:x + patch_size[0], y:y + patch_size[1], :] = patch
+
+    return {"patches": patches, "patch_counts": patch_counts, "stitched": stitched_array}
 
 patch_size = (256, 256)
 stride = 256 
@@ -192,4 +196,18 @@ if __name__ == "__main__":
     results_metrics = results_metrics.sort_values(by=["Region", "IoU"], ascending=False)
     results_metrics.to_csv(f'predictions/metrics.csv', index=False)
     results_metrics.to_excel(f'predictions/metrics.xlsx', index=False)
+
+    # Save 467-composed x01 and x03 scenes
+    x01 = np.load('data/scenes_allbands_ndvi/allbands_ndvi_x01.npy')
+    x03 = np.load('data/scenes_allbands_ndvi/allbands_ndvi_x03.npy')
+    x01 = (x01 - np.min(x01)) / (np.max(x01) - np.min(x01) + 1e-6)
+    x03 = (x03 - np.min(x03)) / (np.max(x03) - np.min(x03) + 1e-6)
+    x01 = x01[:, :, [3, 5, 6]]
+    x03 = x03[:, :, [3, 5, 6]]
+    x01 = patchify(x01, patch_size, stride)["stitched"]
+    x03 = patchify(x03, patch_size, stride)["stitched"]
+    x01 = cv2.cvtColor(x01, cv2.COLOR_RGB2BGR)
+    x03 = cv2.cvtColor(x03, cv2.COLOR_RGB2BGR)
+    cv2.imwrite('predictions/x01_scene.png', x01 * 255)
+    cv2.imwrite('predictions/x03_scene.png', x03 * 255)
 
