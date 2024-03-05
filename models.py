@@ -4,12 +4,10 @@ import torch
 import torchmetrics
 import numpy as np
 import hashlib
-from focalloss import FocalLoss
-from tverskyloss import BinaryTverskyLoss
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 class DeforestationDetectionModel(pl.LightningModule):
-    def __init__(self, in_channels, encoder_name='resnet101', lr=1e-3, encoder_weights='imagenet'):
+    def __init__(self, in_channels, loss, encoder_name='resnet101', lr=1e-3, encoder_weights='imagenet'):
         super().__init__()
 
         # Defining model
@@ -19,7 +17,7 @@ class DeforestationDetectionModel(pl.LightningModule):
                                  encoder_name=encoder_name,
                                  encoder_weights=encoder_weights)
 
-        self.loss = torch.nn.BCEWithLogitsLoss()
+        self.loss = loss
         self.lr = lr
 
         # Defining metrics
