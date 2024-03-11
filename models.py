@@ -30,7 +30,7 @@ class DeforestationDetectionModel(pl.LightningModule):
         if loss.__class__.__name__ == 'FocalLoss':
             self.alpha = self.loss.alpha
             self.gamma = self.loss.gamma
-        elif loss.__class__.__name__ == 'TverskyLoss':
+        elif loss.__class__.__name__ == 'BinaryTverskyLoss':
             self.alpha = self.loss.alpha
             self.beta = self.loss.beta
 
@@ -206,13 +206,13 @@ class DeforestationDetectionModel(pl.LightningModule):
             filename = f'predictions/{region}_{composition}_{loss}'
             if self.alpha is not None:
                 model_info_str += f" | Alpha: {self.alpha}"
-                filename += f"_alpha{self.alpha}"
+                filename += f"_alpha{str(self.alpha).replace('.', '')}"
             if self.beta is not None:
                 model_info_str += f" | Beta: {self.beta}"
-                filename += f"_beta{self.beta}"
+                filename += f"_beta{str(self.beta).replace('.', '')}"
             if self.gamma is not None:
                 model_info_str += f" | Gamma: {self.gamma}"
-                filename += f"_gamma{self.gamma}"
+                filename += f"_gamma{str(self.gamma).replace('.', '')}"
             filename += '.png'
             
             cv2.putText(confusion_mask, metrics_str, (0, height + 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
