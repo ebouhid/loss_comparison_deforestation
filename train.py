@@ -6,10 +6,12 @@ import sys
 from pytorch_lightning.callbacks import ModelCheckpoint
 import mlflow
 import albumentations as A
+from focalloss import FocalLoss
+from tverskyloss import BinaryTverskyLoss
 
 # Set experiment name
-INFO = 'TverskyLoss_03_07'
-# mlflow.set_experiment(INFO)
+INFO = 'Testrun'
+mlflow.set_experiment(INFO)
 
 # Set hyperparameters
 MODEL_NAME = 'DeepLabV3Plus'
@@ -27,7 +29,8 @@ compname = ''.join([str(i) for i in COMPOSITION]) if COMPOSITION != range(1, 9) 
 train_regions = [2, 4, 6, 7, 8, 9, 10]  # Do not use region 5 anywhere
 test_regions = [1, 3]
 
-model = models.DeepLabV3Plus_TverskyLoss_4ch()
+loss = FocalLoss(alpha=1, gamma=2)
+model = models.DeforestationDetectionModel(in_channels=len(COMPOSITION), composition_name=compname, loss=loss)
 
 aug = A.Compose([
     A.VerticalFlip(p=0.5),
@@ -90,7 +93,7 @@ checkpoint_callback = ModelCheckpoint(dirpath='./models/', filename=f'{INFO}-{MO
 
 # Instantiating trainer
 trainer = pl.Trainer(max_epochs=NUM_EPOCHS,
-                        callbacks=[checkpoint_callback])
+                        callbacks=[checkpoint_callback], accelerator="gpu", devices=-1)
 
 # Training
 trainer.fit(model, train_loader, test_loader)
