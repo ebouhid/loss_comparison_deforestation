@@ -30,7 +30,7 @@ class DeforestationDetectionModel(pl.LightningModule):
         if loss.__class__.__name__ == 'FocalLoss':
             self.alpha = self.loss.alpha
             self.gamma = self.loss.gamma
-        elif loss._class__.__name__ == 'TverskyLoss':
+        elif loss.__class__.__name__ == 'TverskyLoss':
             self.alpha = self.loss.alpha
             self.beta = self.loss.beta
 
