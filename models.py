@@ -3,7 +3,6 @@ import pytorch_lightning as pl
 import torch
 import torchmetrics
 import numpy as np
-import hashlib
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import math
 from copy import deepcopy
@@ -220,23 +219,6 @@ class DeforestationDetectionModel(pl.LightningModule):
             cv2.putText(confusion_mask, model_info_str, (0, height + 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             confusion_mask = cv2.cvtColor(confusion_mask, cv2.COLOR_BGR2RGB)
             cv2.imwrite(filename, confusion_mask)
-
-    # # Save 467-composed x01 and x03 scenes
-    # x01 = np.load('data/scenes_allbands_ndvi/allbands_ndvi_x01.npy')
-    # x03 = np.load('data/scenes_allbands_ndvi/allbands_ndvi_x03.npy')
-    # x01 = (x01 - np.min(x01)) / (np.max(x01) - np.min(x01) + 1e-6)
-    # x03 = (x03 - np.min(x03)) / (np.max(x03) - np.min(x03) + 1e-6)
-    # x01 = x01[:, :, [3, 5, 6]]
-    # x03 = x03[:, :, [3, 5, 6]]
-    # x01 = patchify(x01, patch_size, stride)["stitched"]
-    # x03 = patchify(x03, patch_size, stride)["stitched"]
-    # x01 = cv2.cvtColor(x01, cv2.COLOR_RGB2BGR)
-    # x03 = cv2.cvtColor(x03, cv2.COLOR_RGB2BGR)
-    # cv2.imwrite('predictions/x01_scene.png', x01 * 255)
-    # cv2.imwrite('predictions/x03_scene.png', x03 * 255)
-
-
-
 
 def patchify(array, patch_size, stride):
     height, width, _ = array.shape

@@ -2,7 +2,6 @@ import torch
 from data.dataset import XinguDataset
 import models
 import pytorch_lightning as pl
-import sys
 from pytorch_lightning.callbacks import ModelCheckpoint
 import mlflow
 import albumentations as A
