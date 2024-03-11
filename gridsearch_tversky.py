@@ -9,7 +9,7 @@ from focalloss import FocalLoss
 from tverskyloss import BinaryTverskyLoss
 
 # Set experiment name
-INFO = 'Test_grid'
+INFO = 'TverskyGridSearch'
 mlflow.set_experiment(INFO)
 # Instantiating logger
 mlflow.pytorch.autolog()
@@ -17,7 +17,7 @@ mlflow.pytorch.autolog()
 # Set hyperparameters
 MODEL_NAME = 'DeepLabV3Plus'
 BATCH_SIZE = 32
-NUM_EPOCHS = 10
+NUM_EPOCHS = 100
 PATCH_SIZE = 256
 STRIDE_SIZE = 64
 NUM_CLASSES = 1
@@ -90,7 +90,9 @@ for alpha, beta in zip(alphas, betas):
         'train_regions': train_regions,
         'test_regions': test_regions,
         'train_size': len(train_ds),
-        'test_size': len(test_ds)
+        'test_size': len(test_ds),
+        'alpha': alpha,
+        'beta': beta
     })
 
     # Instantiating checkpoint callback
