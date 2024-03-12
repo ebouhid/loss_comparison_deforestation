@@ -30,7 +30,7 @@ compname = ''.join([str(i) for i in COMPOSITION]) if COMPOSITION != range(1, 9) 
 train_regions = [2, 4, 6, 7, 8, 9, 10]  # Do not use region 5 anywhere
 test_regions = [1, 3]
 
-alphas = [0.25, 0.5, 0.75, 1., 2.]
+alphas = [0.25, 0.5, 0.75, 1.]
 gammas = [0.1, 0.5, 2., 5.]
 
 for alpha, gamma in product(alphas, gammas):
