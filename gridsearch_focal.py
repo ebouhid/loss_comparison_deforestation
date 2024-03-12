@@ -6,7 +6,6 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 import mlflow
 import albumentations as A
 from focalloss import FocalLoss
-from tverskyloss import BinaryTverskyLoss
 from itertools import product
 
 # Set experiment name
