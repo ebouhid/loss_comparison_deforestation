@@ -3,11 +3,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class FocalLoss(nn.Module):
-    def __init__(self, alpha=1, gamma=2, reduction='mean'):
+    def __init__(self, alpha=1, gamma=2, reduction='mean', debug=False):
         super(FocalLoss, self).__init__()
         self.alpha = alpha
         self.gamma = gamma
         self.reduction = reduction
+        self.debug = debug
 
     def forward(self, pred, target):
         # print(pred.shape)
@@ -15,13 +16,22 @@ class FocalLoss(nn.Module):
         # Flatten the predictions and targets
         pred = pred.view(-1)
         target = target.view(-1)
+        pt = torch.where(target == 1, pred, 1 - pred)
+
+        alpha_t = torch.where(target == 1, self.alpha, 1 - self.alpha)
 
         # Compute the cross-entropy loss
-        ce_loss = F.cross_entropy(pred, target, reduction='none')
+        ce_loss = torch.log(pt + 1e-9)
+
+        if self.debug:
+            print(f'pt shape: {pt.shape}')
+            print(f'target shape: {target.shape}')
+            print(f'ce_loss shape: {ce_loss.shape}')
+            print(f'CE Loss: {ce_loss}')
+            print(f'alpha_t shape: {alpha_t.shape}')
 
         # Compute the focal loss
-        pt = torch.exp(-ce_loss)
-        focal_loss = (self.alpha * (1 - pt) ** self.gamma * ce_loss)
+        focal_loss = -(alpha_t * ((1 - pt) ** self.gamma) * ce_loss)
 
         # Apply reduction
         if self.reduction == 'mean':

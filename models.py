@@ -15,7 +15,7 @@ class DeforestationDetectionModel(pl.LightningModule):
         # Defining model
         self.model = smp.DeepLabV3Plus(in_channels=in_channels,
                                  classes=1,
-                                 activation=None,
+                                 activation='sigmoid',
                                  encoder_name=encoder_name,
                                  encoder_weights=encoder_weights)
 
