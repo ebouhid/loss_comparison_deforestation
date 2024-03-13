@@ -75,12 +75,12 @@ class DeforestationDetectionModel(pl.LightningModule):
         train_iou = np.float64(self.train_iou(outputs, targets))
 
         # Log metrics
-        self.log('train_loss', loss, on_epoch=True)
-        self.log('train_accuracy', train_accuracy, on_epoch=True)
-        self.log('train_precision', train_precision, on_epoch=True)
-        self.log('train_recall', train_recall, on_epoch=True)
-        self.log('train_f1', train_f1, on_epoch=True)
-        self.log('train_iou', train_iou, on_epoch=True)
+        self.log('train_loss', loss, on_epoch=True, sync_dist=True)
+        self.log('train_accuracy', train_accuracy, on_epoch=True, sync_dist=True)
+        self.log('train_precision', train_precision, on_epoch=True, sync_dist=True)
+        self.log('train_recall', train_recall, on_epoch=True, sync_dist=True)
+        self.log('train_f1', train_f1, on_epoch=True, sync_dist=True)
+        self.log('train_iou', train_iou, on_epoch=True, sync_dist=True)
 
         return loss
 
@@ -97,12 +97,12 @@ class DeforestationDetectionModel(pl.LightningModule):
         val_iou = np.float64(self.val_iou(outputs, targets))
 
         # Log metrics
-        self.log('val_loss', loss, on_epoch=True)
-        self.log('val_accuracy', val_accuracy, on_epoch=True)
-        self.log('val_precision', val_precision, on_epoch=True)
-        self.log('val_recall', val_recall, on_epoch=True)
-        self.log('val_f1', val_f1, on_epoch=True)
-        self.log('val_iou', val_iou, on_epoch=True)
+        self.log('val_loss', loss, on_epoch=True, sync_dist=True)
+        self.log('val_accuracy', val_accuracy, on_epoch=True, sync_dist=True)
+        self.log('val_precision', val_precision, on_epoch=True, sync_dist=True)
+        self.log('val_recall', val_recall, on_epoch=True, sync_dist=True)
+        self.log('val_f1', val_f1, on_epoch=True, sync_dist=True)
+        self.log('val_iou', val_iou, on_epoch=True, sync_dist=True)
 
         return val_f1
     
