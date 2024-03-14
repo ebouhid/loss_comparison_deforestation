@@ -21,7 +21,7 @@ class FocalLoss(nn.Module):
         alpha_t = torch.where(target == 1, self.alpha, 1 - self.alpha)
 
         # Compute the cross-entropy loss
-        ce_loss = torch.log(pt + 1e-9)
+        ce_loss = torch.log(pt + 1e-6)
 
         if self.debug:
             print(f'pt shape: {pt.shape}')
@@ -33,10 +33,16 @@ class FocalLoss(nn.Module):
         # Compute the focal loss
         focal_loss = -(alpha_t * ((1 - pt) ** self.gamma) * ce_loss)
 
+        if self.debug:
+            print(f'Focal Loss range: {focal_loss.min()} - {focal_loss.max()}')
+
         # Apply reduction
         if self.reduction == 'mean':
             focal_loss = torch.mean(focal_loss)
         elif self.reduction == 'sum':
             focal_loss = torch.sum(focal_loss)
+
+        if self.debug:
+            print(f'Focal Loss: {focal_loss}')
 
         return focal_loss
