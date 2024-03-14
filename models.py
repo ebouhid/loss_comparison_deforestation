@@ -9,7 +9,7 @@ from copy import deepcopy
 import cv2
 
 class DeforestationDetectionModel(pl.LightningModule):
-    def __init__(self, in_channels, composition_name, loss, encoder_name='resnet101', lr=1e-3, encoder_weights='imagenet'):
+    def __init__(self, in_channels, composition_name, loss, encoder_name='resnet101', lr=1e-3, encoder_weights='imagenet', debug=False):
         super().__init__()
 
         # Defining model
@@ -27,6 +27,8 @@ class DeforestationDetectionModel(pl.LightningModule):
         self.gamma = None
 
         self.composition_name = composition_name
+        self.debug = debug
+
         if loss.__class__.__name__ == 'FocalLoss':
             self.alpha = self.loss.alpha
             self.gamma = self.loss.gamma
@@ -151,6 +153,8 @@ class DeforestationDetectionModel(pl.LightningModule):
                 with torch.no_grad():
                     prediction = model(patch)
                     prediction = torch.sigmoid(prediction)
+                    if self.debug:
+                        print(f'Prediction range: {prediction.min()} - {prediction.max()}')
                     prediction = (prediction > 0.5)
                 predicted_masks.append((prediction, (x, y)))
                 # cv2.imwrite(f'predictions/{region}_{composition}_{loss}_{x}_{y}.png', prediction.squeeze().cpu().numpy() * 255)
