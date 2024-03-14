@@ -152,7 +152,7 @@ class DeforestationDetectionModel(pl.LightningModule):
                 patch = torch.tensor(patch, device='cuda').permute(2, 0, 1).unsqueeze(0).float()
                 with torch.no_grad():
                     prediction = model(patch)
-                    prediction = torch.sigmoid(prediction)
+                    # prediction = torch.sigmoid(prediction) # Sigmoid is already applied in the model
                     if self.debug:
                         print(f'Prediction range: {prediction.min()} - {prediction.max()}')
                     prediction = (prediction > 0.5)
