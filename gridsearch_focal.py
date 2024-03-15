@@ -38,14 +38,15 @@ for alpha, gamma in product(alphas, gammas):
 
     model = models.DeforestationDetectionModel(in_channels=len(COMPOSITION), composition_name=compname, loss=loss, debug=True)
 
-    aug = A.Compose([
+    aug = A.Sequential([
         A.VerticalFlip(p=0.5),
         A.RandomRotate90(p=0.5),
         A.OneOf([
             A.ElasticTransform(p=0.5, alpha=120, sigma=120 * 0.05, alpha_affine=120 * 0.03),
             A.GridDistortion(p=0.5),
             A.OpticalDistortion(distort_limit=1, shift_limit=0.5, p=1),
-        ], p=0.8)])
+        ], p=0.8),
+        A.Normalize(mean=(0.485, 0.456, 0.406, 0.5), std=(0.229, 0.224, 0.225, 0.5), max_pixel_value=1.0)])
 
     # Instantiating datasets
     train_ds = XinguDataset(DATASET_DIR,
