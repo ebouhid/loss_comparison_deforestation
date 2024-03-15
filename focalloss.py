@@ -21,6 +21,14 @@ class FocalLoss(nn.Module):
         alpha_t = torch.where(target == 1, self.alpha, 1 - self.alpha)
 
         # Compute the cross-entropy loss
+        assert pred.shape == target.shape, f'pred shape: {pred.shape}, target shape: {target.shape} mismatch!'
+        assert pt.shape == target.shape, f'pt shape: {pt.shape}, target shape: {target.shape} mismatch!'
+        assert torch.all(pred >= 0), f'pred has negative values: {pred}'
+        assert torch.all(pred <= 1), f'pred has values greater than 1: {pred}'
+        assert torch.all(pt >= 0), f'pt has negative values: {pt}'
+        assert torch.all(pt <= 1), f'pt has values greater than 1: {pt}'
+        assert torch.all(target >= 0), f'target has negative values: {target}'
+        assert torch.all(target <= 1), f'target has values greater than 1: {target}'
         ce_loss = F.binary_cross_entropy(pred, target, reduction='none')
 
         if self.debug:
