@@ -9,7 +9,7 @@ from focalloss import FocalLoss
 from itertools import product
 
 # Set experiment name
-INFO = 'FocalLossGridSearch'
+INFO = 'test'
 mlflow.set_experiment(INFO)
 # Instantiating logger
 mlflow.pytorch.autolog()
@@ -30,13 +30,13 @@ compname = ''.join([str(i) for i in COMPOSITION]) if COMPOSITION != range(1, 9) 
 train_regions = [2, 4, 6, 7, 8, 9, 10]  # Do not use region 5 anywhere
 test_regions = [1, 3]
 
-alphas = [0., 0.25, 0.5, 0.75, 1.]
+alphas = [0.25, 0.5, 0.75]
 gammas = [0.1, 0.25, 0.5, 1., 2., 5.]
 
 for alpha, gamma in product(alphas, gammas):
     loss = FocalLoss(alpha=alpha, gamma=gamma, debug=True)
 
-    model = models.DeforestationDetectionModel(in_channels=len(COMPOSITION), composition_name=compname, loss=loss, debug=True)
+    model = models.DeforestationDetectionModel(in_channels=len(COMPOSITION), composition_name=compname, lr=1e-5, loss=loss, debug=True)
 
     aug = A.Sequential([
         A.VerticalFlip(p=0.5),
@@ -107,3 +107,6 @@ for alpha, gamma in product(alphas, gammas):
     trainer.fit(model, train_loader, test_loader)
 
     mlflow.end_run()
+
+# End of gridsearch
+print(f"{10*'#'}Gridsearch finished!{10*'#'}")
