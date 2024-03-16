@@ -23,6 +23,8 @@ class FocalLoss(nn.Module):
         # Compute the cross-entropy loss
         assert pred.shape == target.shape, f'pred shape: {pred.shape}, target shape: {target.shape} mismatch!'
         assert pt.shape == target.shape, f'pt shape: {pt.shape}, target shape: {target.shape} mismatch!'
+        assert not torch.any(torch.isnan(pred)), f'pred has NaN values: {pred}'
+        assert not torch.any(torch.isinf(pred)), f'pred has Inf values: {pred}'
         assert torch.all(pred >= 0), f'pred has negative values: {pred}'
         assert torch.all(pred <= 1), f'pred has values greater than 1: {pred}'
         assert torch.all(pt >= 0), f'pt has negative values: {pt}'
